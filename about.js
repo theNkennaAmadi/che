@@ -10,7 +10,7 @@ export class About{
     }
 
     init() {
-        //console.log(this.logos[5])
+        console.log(this.logos[5])
         this.logosList.appendChild(this.brandsHeading)
         //this.moveBoxes();
     }
