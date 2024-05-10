@@ -31,7 +31,12 @@ function updateTime() {
     };
     // Get current time in New York
     const timeString = new Date().toLocaleTimeString('en-US', options);
-
+    const formatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', timeZone: 'America/New_York' });
+    const year = formatter.format(new Date());
+    let footerYear = document.querySelector('#footerYear');
+    if (footerYear) {
+        footerYear.textContent = year;
+    }
     // Replace lowercase am/pm with uppercase AM/PM
     return timeString.replace('am', 'AM').replace('pm', 'PM');
 

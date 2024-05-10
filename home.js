@@ -195,7 +195,7 @@ class Home{
         this.initWorksHover()
         this.initTeamMove()
         this.initTitleAnimation()
-        this.initOrdiomi()
+        //this.initOrdiomi()
     }
 
 
@@ -311,20 +311,21 @@ class Home{
 
     initWorksHover(){
         this.container.querySelectorAll('.home-work-image').forEach(el => new ImageHover(el));
+
         this.homeVisuals.forEach((visual) => {
+            let tlVisual = gsap.timeline({paused: true})
+            tlVisual.to(visual.querySelector('.embed'), {
+                scale: 1, duration: 0.4, delay:0.7,
+                onComplete: () => {visual.querySelector('video').play()},
+                onReverseComplete: () => {
+                visual.querySelector('video').currentTime = 0
+                visual.querySelector('video').pause()}
+            })
             visual.addEventListener('mouseenter', () => {
-                gsap.to(visual.querySelector('.embed'), {scale: 1, duration: 0.4, delay:0.7,
-                onComplete: () => {visual.querySelector('video').play()}
-                })
+                tlVisual.restart()
             })
             visual.addEventListener('mouseleave', () => {
-                gsap.to(visual.querySelector('.embed'), {scale: 0, duration: 0.4,
-                    onComplete: () => {
-                        visual.querySelector('video').currentTime = 0
-                        visual.querySelector('video').pause()
-                    }
-                })
-
+                tlVisual.reverse()
             })
         })
     }

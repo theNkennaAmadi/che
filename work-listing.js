@@ -56,8 +56,8 @@ export class WorkListing {
     initSwiper() {
         this.swiper = new Swiper('.swiper', {
             loop: true,
-            slidesPerView: 2,
-            spaceBetween: 20,
+            slidesPerView: 1.5,
+            spaceBetween: 16,
             direction: 'horizontal',
             centeredSlides: true,
             grabCursor: true,
@@ -69,10 +69,17 @@ export class WorkListing {
             simulateTouch: true,
 
              */
+            breakpoints: {
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                }
+            }
         });
         this.swiper.on('activeIndexChange', () => {
             this.showActiveTitle();
         });
+        gsap.to('.work-listing-list', {opacity: 1, duration: 0.5});
     }
 
     showActiveTitle() {

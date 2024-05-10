@@ -8,6 +8,7 @@ import {ScrollTrigger} from "gsap/ScrollTrigger";
 import {WorkListing} from "./work-listing.js";
 import Home from "./home.js";
 import About from "./about.js";
+import {Contact} from "./contact.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -79,6 +80,7 @@ barba.init({
         {
             namespace: "contact",
             afterEnter(data) {
+                new Contact(data.next.container);
             },
         },
         {
