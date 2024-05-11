@@ -19,6 +19,8 @@ class Work{
         this.videoDuration = container.querySelector(".work-duration-inner-wrapper");
         this.videoDurationWrapper = container.querySelector(".work-duration-outer-wrapper");
         this.homeVisuals = [...container.querySelectorAll('.home-works-visual')]
+        this.creditsOpenBtn = container.querySelector('.button-secondary');
+        this.creditsCloseBtn = container.querySelector('.credits-close');
         ScrollTrigger.clearScrollMemory()
         this.init();
     }
@@ -30,6 +32,7 @@ class Work{
         this.handleImagesScroll()
         this.handleVideoUpdate()
         this.initWorksHover()
+        this.handleShowCredits()
     }
 
     initSplitting() {
@@ -120,7 +123,7 @@ class Work{
                         trigger: image,
                         start: "top 120%",
                         end: "bottom bottom",
-                        scrub: true,
+                        scrub: 1,
                         invalidateOnRefresh: true,
                     }
                 })
@@ -168,6 +171,21 @@ class Work{
                 })
 
             })
+        })
+    }
+
+    handleShowCredits(){
+        const tl = gsap.timeline({paused:true});
+        tl.to(".work-info", {opacity: 0, duration: 0.4})
+        tl.to(".work-credits", {display: "grid", opacity: 1, duration: 0.6})
+
+
+        this.creditsOpenBtn.addEventListener('click', () => {
+            tl.play()
+        })
+
+        this.creditsCloseBtn.addEventListener('click', () => {
+            tl.reverse()
         })
     }
 

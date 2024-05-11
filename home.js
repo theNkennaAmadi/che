@@ -3,9 +3,8 @@ import scrollTrigger from "gsap/ScrollTrigger";
 import {Observer} from "gsap/Observer";
 import Splitting from "splitting";
 import {ImageHover} from "./imageHover.js";
-import { Item } from './item.js'; // Imported Item module
-//import OriDomi from 'oridomi';
-
+import {Item} from './item.js'; // Imported Item module
+import OriDomi from 'oridomi';
 
 
 gsap.registerPlugin(scrollTrigger);
@@ -174,8 +173,9 @@ class Marquee {
 }
 
 class Home{
-    constructor(container) {
+    constructor(container, lenis) {
         this.container = container
+        this.lenis = lenis
         this.homeTop = this.container.querySelector('.home-top')
         this.sectionBrands = this.container.querySelector('[data-section="brands"]')
         this.sectionWork = this.container.querySelector('[data-section="work"]')
@@ -195,7 +195,23 @@ class Home{
         this.initWorksHover()
         this.initTeamMove()
         this.initTitleAnimation()
-        //this.initOrdiomi()
+        this.runPreloader()
+    }
+
+    runPreloader(){
+        if(window.sessionStorage.getItem('loaded')){
+            gsap.to('.preloader-wrapper', {opacity:0})
+            gsap.to('.preloader-wrapper', {display: 'none', delay:0.4})
+        }
+        else{
+            console.log('no session storage')
+            this.lenis.stop()
+            gsap.to('.preloader-text, .loading-wrapper', {opacity: 1})
+            gsap.to('.bar', {backgroundColor: '#F7F4ED', duration: 2, stagger: 0.5, delay: 0.8, onComplete: ()=>{
+                    this.initOrdiomi()
+                }})
+            window.sessionStorage.setItem('loaded', 'true')
+        }
     }
 
 
@@ -223,17 +239,23 @@ class Home{
          */
     }
 
-    /*
+
     initOrdiomi(){
-        console.log('init')
-        var folded = new OriDomi('main');
-        console.log(folded)
-        document.addEventListener('click', ()=>{
-            console.log('click')
-            folded.accordion(-75)
+        let folded = new OriDomi('.preloader-wrapper', {
+            hPanels: 10,
+            vPanels: 10,
+            speed: 1000,
+        });
+        folded.accordion(-40, 'left', ()=>{
+            folded.setSpeed(800)
+            folded.accordion(-90, ()=>{
+                this.lenis.start()
+                gsap.to('.preloader-wrapper', {display: 'none'})
+                document.querySelector("body").style = '';
+            })
         })
     }
-    */
+
 
 
     changeBGColor(){
@@ -481,8 +503,7 @@ class Home{
                 .fromTo(itemInnerWrap, {
                     xPercent: pos => {
                         const distanceFromCenter = pos * intervalPixels;
-                        const xPercent = distanceFromCenter + offset;
-                        return xPercent;
+                        return distanceFromCenter + offset;
                     },
                     rotationZ: (pos, _, arr) => pos < arr.length/2 ? -initialValues.rotation*(arr.length/2-pos)-initialValues.rotation : initialValues.rotation*(pos-arr.length/2)+initialValues.rotation
                 }, {
@@ -536,8 +557,7 @@ class Home{
                 .fromTo(itemInnerWrap, {
                     xPercent: pos => {
                         const distanceFromCenter = pos * intervalPixels;
-                        const xPercent = distanceFromCenter + offset;
-                        return xPercent;
+                        return distanceFromCenter + offset;
                     },
                 }, {
                     xPercent: 0,
@@ -568,7 +588,7 @@ class Home{
             })
                 .fromTo(itemInner, {
                     xPercent: (pos, _, arr) => pos < arr.length/2 ? -initialValues.x*pos-initialValues.x : initialValues.x*(pos-arr.length/2)+initialValues.x,
-                    yPercent: (pos, _, arr) => pos%2 === 0 ? -40 : 40,
+                    yPercent: (pos, _, ) => pos%2 === 0 ? -40 : 40,
                 }, {
                     xPercent: 0,
                     yPercent: 0

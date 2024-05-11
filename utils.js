@@ -12,6 +12,8 @@ export class Nav{
 
     init(){
         this.showTime()
+        this.initSplitting()
+        this.animateLinks()
     }
 
     showTime(){
@@ -19,6 +21,40 @@ export class Nav{
         setInterval(() => {
             this.navTime.textContent = updateTime();
         }, 1000);
+    }
+
+    initSplitting() {
+        //Initialize Splitting, split the text into characters and get the results
+        const targets = [...this.header.querySelectorAll("[split-text]")];
+        const results = Splitting({target: targets, by: "chars"});
+
+        //Get all the words and wrap each word in a span
+        this.words = this.header.querySelectorAll(".word");
+        this.words.forEach((word) => {
+            let wrapper = document.createElement("span");
+            wrapper.classList.add("char-wrap");
+            word.parentNode.insertBefore(wrapper, word);
+            wrapper.appendChild(word);
+        });
+
+        //Get all the characters and move them off the screen
+        this.chars = results.map((result) => result.chars);
+    }
+
+    animateLinks(){
+        this.navLinks.forEach((link) => {
+            let tl = gsap.timeline({paused:true,defaults: {ease: "power3"}});
+            tl.to(link.querySelectorAll('.char'), {y:'1em', stagger: 0.05})
+            link.addEventListener('mouseenter', () => {
+                tl.timeScale(1)
+                tl.play();
+            })
+            link.addEventListener('mouseleave', () => {
+                tl.timeScale(1.5)
+                tl.reverse();
+            })
+        })
+
     }
 }
 

@@ -1,6 +1,5 @@
 import barba from "@barba/core";
 import gsap from "gsap";
-import {Nav} from "./utils.js";
 import Work from "./work.js";
 import Lenis from "@studio-freight/lenis";
 
@@ -36,17 +35,14 @@ gsap.ticker.lagSmoothing(0);
 
 
 
-let firstLoad = true;
-
-let navigation = new Nav(document.querySelector('.header'));
-
 
 barba.hooks.enter((data) => {
     gsap.set([data.next.container, data.current.container], { position: "fixed", top: 0, left: 0, width: "100%", height:'100vh' });
 });
 barba.hooks.after((data) => {
     window.history.scrollRestoration = "manual"
-    gsap.set(data.next.container, { position: "relative", height: "auto" });
+    //gsap.set(data.next.container, { position: "relative", height: "auto", transform: 'none' });
+    data.next.container.style='' //needed to remove the inline styles added by barba, transforms affect css positioning like fixed and sticky
     window.Webflow && window.Webflow.require("ix2").init();
 });
 
@@ -56,44 +52,48 @@ barba.init({
         {
             namespace: "home",
             afterEnter(data) {
-                new Home(data.next.container)
+                new Home(data.next.container, lenis)
             }
         },
         {
             namespace: "work-list",
             afterEnter(data) {
+                window.sessionStorage.setItem('loaded', 'true')
                 new WorkListing(data.next.container);
             },
         },
         {
             namespace: "work",
             afterEnter(data) {
+                window.sessionStorage.setItem('loaded', 'true')
                 new Work(data.next.container);
             },
         },
         {
             namespace: "about",
             afterEnter(data) {
-                new About(data.next.container)
+                window.sessionStorage.setItem('loaded', 'true')
+                new About(data.next.container, lenis)
             },
         },
         {
             namespace: "contact",
             afterEnter(data) {
+                window.sessionStorage.setItem('loaded', 'true')
                 new Contact(data.next.container);
             },
         },
         {
             namespace: "404",
-            beforeEnter() {},
+            afterEnter() {
+                window.sessionStorage.setItem('loaded', 'true')
+            },
         }
     ],
     transitions: [
         {
             sync: true,
             enter(data) {
-                const currentContainer = data.current.container;
-                const nextContainer = data.next.container;
                 let tlTransition = gsap.timeline({defaults: {ease: "power2.out", duration: 1}});
                 tlTransition.to(data.current.container, { opacity: 0, scale: 0.9 });
                 tlTransition.from(data.next.container, { y: "100vh" }, "<");
